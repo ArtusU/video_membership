@@ -75,7 +75,9 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
+    "ecf_membership.content.apps.ContentConfig",
     "ecf_membership.users.apps.UsersConfig",
+
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
