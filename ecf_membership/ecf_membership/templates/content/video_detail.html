@@ -6,21 +6,22 @@
 <h3>Video Detail</h3>
 
 <div class="container">
-{% for video in video.course.videos.all %}
+
   <div class="card mb-3" style="max-width: 1080px;">
     <div class="row g-0">
       <div class="col-md-4">
-      <a href="{{ video.get_absolute_url }}">VIDEO {{ video.video_id }}</a>
+      <iframe width="280" height="157" src="https://www.youtube.com/embed/{{video.video_id}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
       <div class="col-md-8">
         <div class="card-body">
-          <h5 class="card-title">{{ video.title }}</h5>
+        {% for video in video.course.videos.all %}
+          <a href="{{ video.get_absolute_url }}"><h5 class="card-title">{{ video.title }}</h5></a>
           <p class="card-text">{{ video.description }}</p>
+        {% endfor %}
         </div>
       </div>
     </div>
   </div>
-{% endfor %}
 </div>
 
 
