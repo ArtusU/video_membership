@@ -5,7 +5,10 @@ from django.db.models.signals import pre_save, post_save
 from django.shortcuts import reverse
 from django.utils.text import slugify
 from django.contrib.auth import get_user_model
+from allauth.account.signals import email_confirmed
+import stripe
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 User = get_user_model()
 
@@ -70,12 +73,31 @@ def pre_save_video(sender, instance, *args, **kwargs):
     if not instance.slug:
         instance.slug = slugify(instance.title)
 
-def post_save_user(sender, instance, created, *args, **kwargs):
-    if created:
-        free_trial_priceing = Pricing.objects.get(name='Free Trial')
-        Subscription.objects.create(user=instance, pricing=free_trial_priceing)
+def post_email_confirmed(request, email_address, *args, **kwargs):
+    user = User.objects.get(email=email_address.email)
+    free_trial_pricing = Pricing.objects.get(name='Free Trial')
 
-post_save.connect(post_save_user, sender=User)
+    subscription = Subscription.objects.create(
+        user=user, 
+        pricing=free_trial_pricing
+    )
+    stripe_customer = stripe.Customer.create(
+        email=user.email
+    )
+    stripe_subscription = stripe.Subscription.create(
+        customer=stripe_customer['id'],
+        items=[{'price': 'price_1IX3jVGjLUpjNrZJ5ZwP9cqC'}],
+        trial_period_days=7
+    )
+    
+    print(stripe_subscription)
+    subscription.status = stripe_subscription['status']
+    subscription.stripe_subscription_id = stripe_subscription['id']
+    subscription.save()
+    user.stripe_customer_id = stripe_customer["id"]
+    user.save()
+
+email_confirmed.connect(post_email_confirmed)
 
 pre_save.connect(pre_save_course, sender=Course)
 pre_save.connect(pre_save_video, sender=Video)
