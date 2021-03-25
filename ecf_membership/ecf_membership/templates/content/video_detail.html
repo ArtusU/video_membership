@@ -10,7 +10,11 @@
   <div class="card mb-3" style="max-width: 1080px;">
     <div class="row g-0">
       <div class="col-md-4">
+      {% if has_permission %}
       <iframe width="280" height="157" src="https://www.youtube.com/embed/{{video.video_id}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      {% else %}
+      <p>You do not have permission to see this course. Upgrade your subscription to see this video.</p>
+      {% endif%}
       </div>
       <div class="col-md-8">
         <div class="card-body">

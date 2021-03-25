@@ -31,6 +31,7 @@ class Subscription(models.Model):
 
 
 class Course(models.Model):
+    pricing_tiers = models.ManyToManyField(Pricing, blank=True)
     name        = models.CharField(max_length=100)
     slug        = models.SlugField(unique=True)
     thumbnail   = models.ImageField(upload_to="thumbnails/")
@@ -89,7 +90,7 @@ def post_email_confirmed(request, email_address, *args, **kwargs):
         items=[{'price': 'price_1IX3jVGjLUpjNrZJ5ZwP9cqC'}],
         trial_period_days=7
     )
-    
+
     print(stripe_subscription)
     subscription.status = stripe_subscription['status']
     subscription.stripe_subscription_id = stripe_subscription['id']
