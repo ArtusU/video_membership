@@ -16,6 +16,7 @@ urlpatterns = [
 
     # Content
     path("courses/", include("ecf_membership.content.urls", namespace="content")),
+    path("payment/", include("ecf_membership.payment.urls", namespace="payment")),
 
     # User management
     path("users/", include("ecf_membership.users.urls", namespace="users")),
