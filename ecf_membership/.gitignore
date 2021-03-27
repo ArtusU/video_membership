@@ -280,3 +280,6 @@ ecf_membership/media/
 
 !.envs/.local/
 
+ngrok
+ngrok.exe
+
