@@ -2,11 +2,13 @@ from django.db import models
 from django.conf import settings
 from django.db.models.fields.files import ImageField
 from django.db.models.signals import pre_save, post_save
+from django.contrib.auth.signals import user_logged_in
 from django.shortcuts import reverse
 from django.utils.text import slugify
 from django.contrib.auth import get_user_model
 from allauth.account.signals import email_confirmed
 import stripe
+from stripe.api_resources import subscription
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -103,7 +105,14 @@ def post_email_confirmed(request, email_address, *args, **kwargs):
     user.save()
     
 
-email_confirmed.connect(post_email_confirmed)
+def user_logged_in_receiver(sender, user, **kwargs):
+    subscription = user.subscription
+    sub = stripe.Subscription.retrieve(subscription.stripe_subscription_id)
 
+    subscription.status = sub['status']
+    subscription.save
+
+user_logged_in.connect(user_logged_in_receiver)
+email_confirmed.connect(post_email_confirmed)
 pre_save.connect(pre_save_course, sender=Course)
 pre_save.connect(pre_save_video, sender=Video)
